@@ -1,4 +1,5 @@
-FROM krol/java-fedora:latest
+#FROM krol/java-fedora:latest
+FROM java:8
 
 # Maintainer
 # ----------
@@ -9,19 +10,12 @@ ADD install /install
 
 RUN unzip /install/sqlde* -d ../programs/
 RUN chmod +x /programs/sqldeveloper/sqldeveloper.sh
+#RUN sh /programs/sqldeveloper/sqldeveloper.sh
 
 #clean
 RUN rm -r /install/*
+ENV DISPLAY :0
 
-RUN useradd -s /bin/false oracle
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/
 
-RUN export uid=oracle gid=oracle && \
-    mkdir -p /home/oracle && \
-    echo "oracle:x:${uid}:${gid}:Developer,,,:/home/oracle:/bin/bash" >> /etc/passwd && \
-    echo "oracle:x:${uid}:" >> /etc/group && \
-    echo "oracle ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/oracle && \
-    chmod 0440 /etc/sudoers.d/oracle && \
-    chown ${uid}:${gid} -R /home/oracle
-
-USER oracle
-ENV HOME /home/oracle
+CMD /programs/sqldeveloper/sqldeveloper.sh
